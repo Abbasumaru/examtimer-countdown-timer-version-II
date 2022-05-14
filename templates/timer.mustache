@@ -1,0 +1,190 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template mod_exam/timer
+
+    Countdown timer for take-home release exams.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {
+    }
+}}
+
+{{!
+    @template timer/section
+}}
+
+<script src="templates/jquery-2.1.4.min.js"></script>
+
+
+
+<div class="ygtvitem" id="ygtv1" style="display:none;">
+  <table id="ygtvtableel1" class="ygtvtable ygtvdepth0 ygtv-expanded ygtv-highlight0" cellspacing="0" cellpadding="0" border="0">
+    <tbody>
+      <tr class="ygtvrow">
+        <td class="ygtvcell ygtvln">
+          <div class="ygtvspacer">
+          </div>
+        </td>
+        <td id="ygtvcontentel1" class="ygtvcell ygtvhtml ygtvcontent">
+          <div class="fp-filename-icon">
+            <span class="fp-icon"><img class="icon " alt="" aria-hidden="true" src="http://localhost/moodle/theme/image.php/boost/core/1649870008/f/folder-24"></span>
+            <span class="fp-filename">
+            </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="ygtvchildren" id="ygtvc1" style="display:none;">
+  </div>
+</div>
+<div id="edit" class="singlebutton" style="display:none">
+    <form method="post" action="http://localhost/mod/examtimer/edit.php">
+            <input type="hidden" name="id" value="7">
+            <input type="hidden" name="sesskey" value="0WchKNF8G6">
+        <button type="submit" class="btn btn-secondary" id="single_button627ea743d5f019" title="">Edit</button>
+    </form>
+</div>
+
+
+<section>
+  <div id="msg"><h4>Please do not refresh your browser. <br>You will be able to access your exam automatically at the end of the countdown.</h4></div>
+
+<h1 id="demo" style="display:none;">You can start your exam now</h1>
+<div id="clockdiv" style="font-family: sans-serif; color: #fff; display: inline-block; font-weight: 100; text-align: center; font-size: 20px;">
+<div style="padding: 8px; border-radius: 3px; background: #D3D3D3; display: inline-block;">
+  <span class="days" style="padding: 10px; border-radius: 3px; background: #000000; display: inline-block;"></span>
+  <div class="smalltext" style="padding-top: 4px; font-size: 14px;">Days</div>
+</div>
+<div style="padding: 8px; border-radius: 3px; background: #D3D3D3; display: inline-block;">
+  <span class="hours" style="padding: 10px; border-radius: 3px; background: #000000; display: inline-block;"></span>
+  <div class="smalltext" style="padding-top: 4px; font-size: 14px;">Hours</div>
+</div>
+<div style="padding: 8px; border-radius: 3px; background: #D3D3D3; display: inline-block;">
+  <span class="minutes" style="padding: 10px; border-radius: 3px; background: #000000; display: inline-block;"></span>
+  <div class="smalltext" style="padding-top: 4px; font-size: 14px;">Minutes</div>
+</div>
+<div style="padding: 8px; border-radius: 3px; background: #D3D3D3; display: inline-block;">
+  <span class="seconds" style="padding: 10px; border-radius: 3px; background: #000000; display: inline-block;"></span>
+  <div class="smalltext" style="padding-top: 4px; font-size: 14px;">Seconds</div>
+</div>
+</div>
+</section>
+<input type="hidden" id="time_setting" name="time_setting"/>
+<script type="text/javascript">
+
+
+function getParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "i"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+// query string: 'http://localhost/mymoodle/course/view.php?id=6'
+var id = getParameterByName('id'); // 6
+
+function get_time() {
+  //alert(id);
+  $.post("templates/get_time.php", {id:id},
+  function(data, status){
+    //  alert("Data: " + data + "\nStatus: " + status);
+    document.getElementById("time_setting").value=data;
+    });
+}
+get_time();
+
+
+</script>
+
+                {{#js}}
+               function getTimeRemaining(endtime) {
+                  var t = Date.parse(endtime) - Date.parse(new Date());
+                  var seconds = Math.floor((t / 1000) % 60);
+                  var minutes = Math.floor((t / 1000 / 60) % 60);
+                  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+                  var days = Math.floor(t / (1000 * 60 * 60 * 24));
+                  return {
+                      'total': t,
+                      'days': days,
+                      'hours': hours,
+                      'minutes': minutes,
+                      'seconds': seconds
+                  };
+                }
+
+                function initializeClock(id, endtime) {
+
+                      var clock = document.getElementById(id);
+                      var daysSpan = clock.querySelector('.days');
+                      var hoursSpan = clock.querySelector('.hours');
+                      var minutesSpan = clock.querySelector('.minutes');
+                      var secondsSpan = clock.querySelector('.seconds');
+
+                      function updateClock() {
+                          var t = getTimeRemaining(endtime);
+
+                          daysSpan.innerHTML = t.days;
+                          hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+                          minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+                          secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+                          var y = document.getElementById('single_button627ea743d5f019');
+                          var b = document.getElementById('ygtv1');
+
+                          if (t.total <= 0) {
+                              var v = document.getElementById('clockdiv');
+                              var x = document.getElementById('demo');
+                              var z = document.getElementById('msg');
+                              clearInterval(timeinterval);
+
+                              v.style.display = 'none';
+                              z.style.display = 'none';
+                                y.style.display = 'block';
+                                b.style.display = 'block';
+                          }
+
+
+                      }
+
+                      updateClock();
+                      var timeinterval = setInterval(updateClock, 1000);
+                }
+
+                function warming_up(){
+
+                  var deadline = $('#time_setting').val();
+                  // alert(deadline);
+                   initializeClock('clockdiv', deadline);
+                }
+
+                window.setTimeout(warming_up,500);
+
+                {{/js}}

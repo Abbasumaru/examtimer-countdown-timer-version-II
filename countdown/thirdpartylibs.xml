@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>js/jquery.countdown.js</location>
+        <name>Exam Countdown Timer</name>
+        <version>2.2.0</version>
+        <license>MIT</license>
+    </library>
+</libraries>
